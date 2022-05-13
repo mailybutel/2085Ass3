@@ -8,6 +8,7 @@ __docformat__ = 'reStructuredText'
 __modified__ = '21/05/2020'
 __since__ = '14/05/2020'
 
+from primes import largest_prime
 from referential_array import ArrayR
 from typing import TypeVar, Generic
 T = TypeVar('T')
@@ -30,11 +31,26 @@ class LinearProbePotionTable(Generic[T]):
         self.conflict_count = 0
         self.probe_max = 0
         self.probe_total = 0
-        raise NotImplementedError()
+        self.count = 0
+        self.good_hash = good_hash
+        self.table_size = tablesize_override
+        self.table = ArrayR(tablesize_override)
 
     def hash(self, potion_name: str) -> int:
         """"""
-        raise NotImplementedError()
+
+        if self.good_hash:
+            # Good Hash Function
+            value = 0
+            noise = largest_prime(1000)
+            hash_base = largest_prime(5000)
+            for char in potion_name:
+                value = (ord(char) + value + noise) % self.table_size
+                noise = (noise * hash_base) % (self.table_size - 1)
+            return value
+        else:
+            # Bad Hash Function
+            return ord(potion_name[0]) % self.table_size
 
     def statistics(self) -> tuple:
         """"""
