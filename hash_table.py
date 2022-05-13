@@ -34,10 +34,9 @@ class LinearProbePotionTable(Generic[T]):
         self.probe_total = 0
         self.hash_choice = good_hash
         if tablesize_override == -1:
-            self.table_size = largest_prime(max_potions * 2)
+            self.initalise_with_tablesize(largest_prime(max_potions * 2))
         else:
-            self.table_size = tablesize_override
-        self.initalise_with_tablesize(self.table_size)
+            self.initalise_with_tablesize(tablesize_override)
 
     def hash(self, potion_name: str) -> int:
         """"""
@@ -54,8 +53,8 @@ class LinearProbePotionTable(Generic[T]):
         Write a paragraph of what the output should be
         :return:
         """
-        output = (self.conflict_count, self.probe_total, self.probe_max)
-        return output
+        return (self.conflict_count, self.probe_total, self.probe_max)
+         
 
     def __len__(self) -> int:
         """
@@ -78,7 +77,12 @@ class LinearProbePotionTable(Generic[T]):
         if is_insert and self.is_full():
             raise KeyError(key)
 
+        checked = True
+        probe = []
+
         for _ in range(len(self.table)):  # start traversing
+            if self.probe_max < len(probe):
+                self.probe_max = len(probe)
             if self.table[position] is None:  # found empty slot
                 if is_insert:
                     return position
@@ -87,10 +91,16 @@ class LinearProbePotionTable(Generic[T]):
             elif self.table[position][0] == key:  # found key
                 return position
             else:  # there is something but not the key, try next
+                if checked:
+                    self.conflict_count += 1
+                    checked = False
+                probe.append(position)
+                self.probe_total += 1
+
                 position = (position + 1) % len(self.table)
 
         raise KeyError(key)
-
+        
     def __contains__(self, key: str) -> bool:
         """
         Checks to see if the given key is in the Hash Table
