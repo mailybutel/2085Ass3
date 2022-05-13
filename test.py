@@ -1,10 +1,7 @@
 from hash_table import LinearProbePotionTable
 from primes import largest_prime
+from potion import Potion
 
-hash = LinearProbePotionTable(100,True,50)
 
-hash["daniel"] = 135690
-hash["maily"] = 12413
-hash["josh"] = 39875
-
-print(hash)
+health = Potion("Health Potion", "Milk",15,1)
+strength = Potion("Strength Potion", )
