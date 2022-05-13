@@ -8,6 +8,7 @@ __docformat__ = 'reStructuredText'
 __modified__ = '21/05/2020'
 __since__ = '14/05/2020'
 
+from potion import Potion
 from primes import largest_prime
 from referential_array import ArrayR
 from typing import TypeVar, Generic
@@ -31,30 +32,30 @@ class LinearProbePotionTable(Generic[T]):
         self.conflict_count = 0
         self.probe_max = 0
         self.probe_total = 0
-        self.count = 0
-        self.good_hash = good_hash
-        self.table_size = tablesize_override
-        self.table = ArrayR(tablesize_override)
+        self.hash_choice = good_hash
+        if tablesize_override == -1:
+            self.table_size = largest_prime(max_potions * 2)
+        else:
+            self.table_size = tablesize_override
+        self.initalise_with_tablesize(self.table_size)
 
     def hash(self, potion_name: str) -> int:
         """"""
 
-        if self.good_hash:
+        if self.hash_choice:
             # Good Hash Function
-            value = 0
-            noise = largest_prime(1000)
-            hash_base = largest_prime(5000)
-            for char in potion_name:
-                value = (ord(char) + value + noise) % self.table_size
-                noise = (noise * hash_base) % (self.table_size - 1)
-            return value
+            return Potion.good_hash(potion_name, self.table_size)
         else:
             # Bad Hash Function
-            return ord(potion_name[0]) % self.table_size
+            return Potion.bad_hash(potion_name, self.table_size)
 
     def statistics(self) -> tuple:
-        """"""
-        raise NotImplementedError()
+        """
+        Write a paragraph of what the output should be
+        :return:
+        """
+        output = (self.conflict_count, self.probe_total, self.probe_max)
+        return output
 
     def __len__(self) -> int:
         """
