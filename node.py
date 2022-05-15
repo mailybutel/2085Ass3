@@ -55,3 +55,4 @@ class AVLTreeNode(TreeNode, Generic[K, I]):
 
         super(AVLTreeNode, self).__init__(key, item)
         self.height = 1
+        self.num_el_subtree = 1     # keeps track of the elements this node's subtree tree for the kth_largest method
