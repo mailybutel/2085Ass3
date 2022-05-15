@@ -182,19 +182,43 @@ class BinarySearchTree(Generic[K, I]):
 
         return current
 
-    def get_successor(self, current: TreeNode) -> TreeNode:
+    def get_successor(self, current: TreeNode,successor: TreeNode=None,checker: TreeNode=False) -> TreeNode:
         """
             Get successor of the current node.
             It should be a child node having the smallest key among all the
             larger keys.
         """
-        raise NotImplementedError()
+        #Initiailizing i.e. first run
+        if checker == False:
+            checker = self.root
+            
+        
+        #Base case
+        if checker is None:
+            return successor
+        
+        
+        if current.key == checker.key:
+            if checker.right:
+                return self.get_minimal(checker.right) 
+
+        elif current.key < checker.key:
+            successor = checker
+            return self.get_successor(current,successor,checker.left)
+
+        else:
+            return self.get_successor(current,successor,checker.right)
+        
+        return successor 
+
 
     def get_minimal(self, current: TreeNode) -> TreeNode:
         """
             Get a node having the smallest key in the current sub-tree.
         """
-        raise NotImplementedError()
+        while current.left:
+            current = current.left
+        return current
 
     def is_leaf(self, current: TreeNode) -> bool:
         """ Simple check whether or not the node is a leaf. """
@@ -220,3 +244,17 @@ class BinarySearchTree(Generic[K, I]):
         else:
             real_prefix = prefix[:-2] + final
             print('{0}'.format(real_prefix), file=to)
+
+
+b = BinarySearchTree()
+b[15] = "A"
+b[10] = "B"
+b[20] = "C"
+b[17] = "D"
+b[5] = "E"
+b[3] = "F"
+b[4] = "G"
+b[22] = "H"
+print(b.get_tree_node_by_key(15).key)
+print(b.get_tree_node_by_key(15).item)
+print(b.get_successor(b.get_tree_node_by_key(15)).item)
