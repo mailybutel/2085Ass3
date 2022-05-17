@@ -35,6 +35,17 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
             return current.height
         return 0
 
+    def get_num_el_subtree(self, current: AVLTreeNode) -> int:
+        """
+            Get the height of a node. Return current.height if current is
+            not None. Otherwise, return 0.
+            :complexity: O(1)
+        """
+
+        if current is not None:
+            return current.num_el_subtree
+        return 0
+
     def get_balance(self, current: AVLTreeNode) -> int:
         """
             Compute the balance factor for the current sub-tree as the value
@@ -53,8 +64,25 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
             unbalanced.
             returns the new root of the subtree.
         """
+        if current is None:  # base case: at the leaf
+            current = AVLTreeNode(key, item)
+            self.length += 1
+        elif key < current.key:
+            current.left = self.insert_aux(current.left, key, item)
+        elif key > current.key:
+            current.right = self.insert_aux(current.right, key, item)
+        else:  # key == current.key
+            raise ValueError('Inserting duplicate item')
 
-        raise NotImplementedError()
+        # Update the height of parent node
+        current.height = 1 + max(self.get_height(current.left), self.get_height(current.right))
+
+        # Update number of children of the parent node
+        current.num_el_subtree = 1 + self.get_num_el_subtree(current.left) + self.get_num_el_subtree(current.right)
+
+        # Rebalance node if needed and return the new root of the subtree
+        return self.rebalance(current)
+
 
     def delete_aux(self, current: AVLTreeNode, key: K) -> AVLTreeNode:
         """
@@ -64,7 +92,37 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
             returns the new root of the subtree.
         """
 
-        raise NotImplementedError()
+        if current is None:  # key not found
+            raise ValueError('Deleting non-existent item')
+        elif key < current.key:
+            current.left = self.delete_aux(current.left, key)
+        elif key > current.key:
+            current.right = self.delete_aux(current.right, key)
+        else:  # we found our key => do actual deletion
+            if self.is_leaf(current):
+                self.length -= 1
+                return None
+            elif current.left is None:
+                self.length -= 1
+                return current.right
+            elif current.right is None:
+                self.length -= 1
+                return current.left
+
+            # general case => find a successor
+            succ = self.get_successor(current)
+            current.key = succ.key
+            current.item = succ.item
+            current.right = self.delete_aux(current.right, succ.key)
+
+        # Update the height of parent node
+        current.height = 1 + max(self.get_height(current.left), self.get_height(current.right))
+
+        # Update number of children of the parent node
+        current.num_el_subtree = 1 + self.get_num_el_subtree(current.left) + self.get_num_el_subtree(current.right)
+
+        # Rebalance node if needed and return the new root of the subtree
+        return self.rebalance(current)
 
     def left_rotate(self, current: AVLTreeNode) -> AVLTreeNode:
         """
@@ -82,8 +140,23 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
 
             :complexity: O(1)
         """
+        child = current.right
+        center = child.left
 
-        raise NotImplementedError()
+        # Perform rotation
+        child.left = current
+        current.right = center
+
+        # Update heights
+        current.height = 1 + max(self.get_height(current.left), self.get_height(current.right))
+        child.height = 1 + max(self.get_height(child.left), self.get_height(child.right))
+
+        # Update number of children
+        current.num_el_subtree = 1 + self.get_num_el_subtree(current.left) + self.get_num_el_subtree(current.right)
+        child.num_el_subtree = 1 + self.get_num_el_subtree(child.left) + self.get_num_el_subtree(child.right)
+
+        # Return new root
+        return child
 
     def right_rotate(self, current: AVLTreeNode) -> AVLTreeNode:
         """
@@ -101,8 +174,23 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
 
             :complexity: O(1)
         """
+        child = current.left
+        center = child.right
 
-        raise NotImplementedError()
+        # Perform rotation
+        child.right = current
+        current.left = center
+
+        # Update heights
+        current.height = 1 + max(self.get_height(current.left), self.get_height(current.right))
+        child.height = 1 + max(self.get_height(child.left), self.get_height(child.right))
+
+        # Update number of children
+        current.num_el_subtree = 1 + self.get_num_el_subtree(current.left) + self.get_num_el_subtree(current.right)
+        child.num_el_subtree = 1 + self.get_num_el_subtree(child.left) + self.get_num_el_subtree(child.right)
+
+        # Return new root
+        return child
 
     def rebalance(self, current: AVLTreeNode) -> AVLTreeNode:
         """ Compute the balance of the current node.
@@ -133,4 +221,22 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
         Returns the kth largest element in the tree.
         k=1 would return the largest.
         """
-        raise NotImplementedError()
+        # precondition k < this node's num children
+        if k > (self.get_num_el_subtree(self.root) + 1):  # key not found
+            raise ValueError('k cannot be greater than the number of elements in the tree.')
+
+        return self.kth_largest_in_subtree(k, self.root)
+
+    def kth_largest_in_subtree(self, k: int, current: AVLTreeNode) -> AVLTreeNode:
+
+        num_right_tree_nodes = self.get_num_el_subtree(current.right)
+
+        # the kth value is always the one with its right subtree elements == k-1
+        if k == num_right_tree_nodes + 1:
+            return current
+        # if the num elements in the right subtree >= k, move to the right subtree
+        elif k <= num_right_tree_nodes:
+            return self.kth_largest_in_subtree(k, current.right)
+        # otherwise k is in the left subtree. Move to that subtree and update k
+        elif k > (num_right_tree_nodes + 1):
+            return self.kth_largest_in_subtree(k-num_right_tree_nodes-1, current.left)

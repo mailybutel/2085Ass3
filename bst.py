@@ -182,35 +182,16 @@ class BinarySearchTree(Generic[K, I]):
 
         return current
 
-    def get_successor(self, current: TreeNode,successor: TreeNode=None,checker: TreeNode=False) -> TreeNode:
+    def get_successor(self, current: TreeNode) -> TreeNode:
         """
             Get successor of the current node.
             It should be a child node having the smallest key among all the
             larger keys.
         """
-        #Initiailizing i.e. first run
-        if checker == False:
-            checker = self.root
-            
-        
-        #Base case
-        if checker is None:
-            return successor
-        
-        
-        if current.key == checker.key:
-            if checker.right:
-                return self.get_minimal(checker.right) 
 
-        elif current.key < checker.key:
-            successor = checker
-            return self.get_successor(current,successor,checker.left)
-
-        else:
-            return self.get_successor(current,successor,checker.right)
-        
-        return successor 
-
+        if current.right is not None:
+            return self.get_minimal(current.right)
+        return None
 
     def get_minimal(self, current: TreeNode) -> TreeNode:
         """
