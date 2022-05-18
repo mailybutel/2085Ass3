@@ -227,15 +227,15 @@ class BinarySearchTree(Generic[K, I]):
             print('{0}'.format(real_prefix), file=to)
 
 
-b = BinarySearchTree()
-b[15] = "A"
-b[10] = "B"
-b[20] = "C"
-b[17] = "D"
-b[5] = "E"
-b[3] = "F"
-b[4] = "G"
-b[22] = "H"
-print(b.get_tree_node_by_key(15).key)
-print(b.get_tree_node_by_key(15).item)
-print(b.get_successor(b.get_tree_node_by_key(15)).item)
+# b = BinarySearchTree()
+# b[15] = "A"
+# b[10] = "B"
+# b[20] = "C"
+# b[17] = "D"
+# b[5] = "E"
+# b[3] = "F"
+# b[4] = "G"
+# b[22] = "H"
+# print(b.get_tree_node_by_key(15).key)
+# print(b.get_tree_node_by_key(15).item)
+# print(b.get_successor(b.get_tree_node_by_key(15)).item)
