@@ -6,7 +6,7 @@ I = TypeVar('I')
 K = TypeVar('K')
 T = TypeVar('T')
 
-__author__ = 'Maria Garcia de la Banda and Brendon Taylor. Modified by Alexey Ignatiev'
+__author__ = 'Maria Garcia de la Banda and Brendon Taylor. Modified by Alexey Ignatiev, Ze Chong, Daniel Ding and Maily Butel'
 __docformat__ = 'reStructuredText'
 
 
@@ -55,4 +55,7 @@ class AVLTreeNode(TreeNode, Generic[K, I]):
 
         super(AVLTreeNode, self).__init__(key, item)
         self.height = 1
-        self.num_el_subtree = 1     # keeps track of the elements this node's subtree tree for the kth_largest method
+
+        # keeps track of the elements in this node's subtree tree for the kth_largest method
+        # Leaf node always has one in its subtree (itself)
+        self.num_nodes_subtree = 1

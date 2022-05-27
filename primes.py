@@ -1,22 +1,37 @@
+""" This module is used to find prime numbers. """
+
+__author__ = 'Ze Chong, Daniel Ding and Maily Butel'
+
 import math
 
 
 def largest_prime(k: int) -> int:
-    """ Put this in my own words: This algorithm produces all primes not greater than n.
-    It includes a common optimization, which is to start enumerating the multiples of each prime i from i2.
-    The time complexity of this algorithm is O(n log log n),[8] provided the array update is an O(1) operation,
-    as is usually the case. """
-    is_prime = [True for i in range(2, k)]
+    """
+    Finds the largest prime number less than k.
+    :pre: k > 2
+    :complexity: O(n log log n)
+    """
 
-    for i in range(2, int(math.sqrt(k))):
-        if is_prime[i-2]:
-            for j in range(i**2, k, i):
-                is_prime[j-2] = False
+    # 2 is the smallest prime number so k must be >2
+    if k <= 2:
+        raise ValueError("Integer must be greater than 1")
 
-    largest_prime = 2
+    # array of boolean values to keep track of primes
+    # 0 = not prime, 1 = prime
+    is_prime = [True for i in range(k)]
 
-    for i in range(len(is_prime)-1, -1, -1):
+    # 0 and 1 are not primes
+    is_prime[0] = False
+    is_prime[1] = False
+
+    # go through the array until the square root of k
+    for i in range(int(math.sqrt(k))):
+        # If the element is a prime, turn off all multiples of it
         if is_prime[i]:
-            return i+2
+            for j in range(i ** 2, k, i):
+                is_prime[j] = False
 
-    return largest_prime
+    # Go backwards through the array and return the first prime found.
+    for i in range(len(is_prime) - 1, -1, -1):
+        if is_prime[i]:
+            return i

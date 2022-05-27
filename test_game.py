@@ -28,13 +28,13 @@ class TestGame(unittest.TestCase):
         G = Game()
         # There are these potions, with these stats, available over the course of the game.
         G.set_total_potion_data([
-            # Name, Category, Buying price from vendors.
-            ["Potion of Health Regeneration", "Health", 20],
-            ["Potion of Extreme Speed", "Buff", 10],
-            ["Potion of Deadly Poison", "Damage", 45],
-            ["Potion of Instant Health", "Health", 5],
-            ["Potion of Increased Stamina", "Buff", 25],
-            ["Potion of Untenable Odour", "Damage", 1],
+            # Category, Name, Buying price from vendors.
+            ["Health", "Potion of Health Regeneration", 20],
+            ["Buff", "Potion of Extreme Speed", 10],
+            ["Damage", "Potion of Deadly Poison", 45],
+            ["Health", "Potion of Instant Health", 5],
+            ["Buff", "Potion of Increased Stamina", 25],
+            ["Damage", "Potion of Untenable Odour", 1],
         ])
 
         # Start of Day 1

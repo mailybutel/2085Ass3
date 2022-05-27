@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-__author__ = 'Brendon Taylor, modified by Alexey Ignatiev and Jackson Goerner'
+__author__ = 'Brendon Taylor, modified by Alexey Ignatiev, Jackson Goerner, Ze Chong, Daniel Ding and Maily Butel'
 __docformat__ = 'reStructuredText'
 
 from typing import TypeVar, Generic
@@ -155,6 +155,10 @@ class BinarySearchTree(Generic[K, I]):
         """
             Attempts to delete an item from the tree, it uses the Key to
             determine the node to delete.
+            :complexity best: O(CompK) deletes root item which does not have a left and/or a right node.
+            :complexity worst: O(D) deletes item at the bottom of the tree
+            where D is the depth of the tree
+            CompK is the complexity of comparing the keys
         """
 
         if current is None:  # key not found
@@ -187,6 +191,7 @@ class BinarySearchTree(Generic[K, I]):
             Get successor of the current node.
             It should be a child node having the smallest key among all the
             larger keys.
+            :complexity: O(D), where D is the depth of the left-most branch in the right node's subtree.
         """
 
         if current.right is not None:
@@ -196,6 +201,7 @@ class BinarySearchTree(Generic[K, I]):
     def get_minimal(self, current: TreeNode) -> TreeNode:
         """
             Get a node having the smallest key in the current sub-tree.
+            :complexity: O(D), where D is the depth of the subtree's left-most branch
         """
         while current.left:
             current = current.left

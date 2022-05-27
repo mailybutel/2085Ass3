@@ -9,7 +9,7 @@ class Game:
     def __init__(self, seed=0) -> None:
         self.rand = RandomGen(seed=seed)
         # Potion Hash Table (Contains all possible potions)
-        self.potion_table = LinearProbePotionTable(0)
+        self.potion_table = LinearProbePotionTable(3)
         # Potion Binary Search Tree (Contains potions that are purchasable)
         self.potion_inventory = AVLTree()
 
