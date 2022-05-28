@@ -50,7 +50,56 @@ class Game:
         return potion_sell_list
 
     def solve_game(self, potion_valuations: list[tuple[str, float]], starting_money: list[int]) -> list[float]:
-        raise NotImplementedError()
+        profits = []
+        vendor_available = self.choose_potions_for_vendors(4)
+
+        for potion in potion_valuations:
+            #appends into profits where each element is [net profit,litres available,buy price,resell price]
+            counter = 0
+
+            
+            while vendor_available[counter][0] != potion[0]:
+                if counter > len(potion_valuations): #Vendors not selling potion wanted by adventurers
+                    break
+                else:
+                    counter += 1
+
+            profits.append([potion[1]-self.potion_table[potion[0]].buy_price, vendor_available[counter][1], self.potion_table[potion[0]].buy_price, potion[1]])
+        #profits.sort(reverse=True)
+        #sorts with respect to the 1st element first and then the 3rd element
+        profits.sort(key=lambda a: (a[1],a[3]))
+        #print(profits)
+
+        results = []
+
+        for money in starting_money:
+            earnings = 0
+            print("Money " + str(money))
+            for potion in profits:
+                #Buy price * quantity - available money
+                if (money - potion[2]*potion[1]) > 0:
+                    earnings += potion[3]*potion[1]
+                    money = money - potion[2]*potion[1]    
+                    
+                #Cannot buy all stock of most profitable, buys highest possible share of stock
+                else:
+                    quantity = money/potion[2]
+                    earnings += quantity * potion[3]
+                    results.append(earnings)
+                    break
+        print(results)
+            
+            
+                
+
+        
+
+                        
+
+
+        
+
+
 
 
 G = Game()
@@ -72,5 +121,11 @@ G.add_potions_to_inventory([
     ("Potion of Untenable Odour", 5)
 ])
 
-selling = G.choose_potions_for_vendors(4)
-print(selling)
+full_vendor_info = [
+            ("Potion of Health Regeneration", 30),
+            ("Potion of Extreme Speed", 15),
+            ("Potion of Instant Health", 15),
+            ("Potion of Increased Stamina", 20),
+        ]
+
+G.solve_game(full_vendor_info, [12.5, 45, 80])
