@@ -51,6 +51,7 @@ class Game:
 
     def solve_game(self, potion_valuations: list[tuple[str, float]], starting_money: list[int]) -> list[float]:
         profits = []
+        results = []
         vendor_available = self.choose_potions_for_vendors(4)
 
         for potion in potion_valuations:
@@ -69,8 +70,6 @@ class Game:
         #sorts with respect to the 1st element first and then the 3rd element
         profits.sort(key=lambda a: (a[1],a[3]))
         #print(profits)
-
-        results = []
 
         for money in starting_money:
             earnings = 0
