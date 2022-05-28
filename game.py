@@ -40,7 +40,7 @@ class Game:
             # Choose a random number between 0 and C - i, where C is the number of potions and i is the ith vendor
             number_to_choose = len(self.potion_inventory) - i
             # Select a random number between 0 to C - i
-            p = RandomGen().randint(number_to_choose)
+            p = self.rand.randint(number_to_choose)
             # Get the potion: O(log(N))
             potion = self.potion_inventory.kth_largest(p)
             # Append the potion: O(append)
