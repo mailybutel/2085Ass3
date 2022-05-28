@@ -39,7 +39,11 @@ class LinearProbePotionTable(Generic[T]):
             self.initalise_with_tablesize(tablesize_override)
 
     def hash(self, potion_name: str) -> int:
-        """"""
+        """
+        Hashes a string based on the choice of hash function
+        :param potion_name: name of potion as a string
+        :return: integer
+        """
 
         if self.hash_choice:
             # Good Hash Function

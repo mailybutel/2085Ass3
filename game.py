@@ -1,3 +1,12 @@
+""" Game
+
+Runs the game, which handles potion inventory of PotionCorp and vendors. Finds the optimum profit for a given starting
+money value
+"""
+__author__ = 'Brendon Taylor, modified by Jackson Goerner, Ze Chong, Daniel Ding and Maily Butel'
+__docformat__ = 'reStructuredText'
+__modified__ = '21/05/2020'
+__since__ = '14/05/2020'
 from __future__ import annotations
 # ^ In case you aren't on Python 3.10
 from avl import AVLTree
@@ -6,7 +15,7 @@ from potion import Potion
 from random_gen import RandomGen
 
 class Game:
-    
+
     def __init__(self, seed=0) -> None:
         self.rand = RandomGen(seed=seed)
         # Potion Hash Table (Contains all possible potions)
@@ -15,25 +24,53 @@ class Game:
         self.potion_inventory = AVLTree()
 
     def set_total_potion_data(self, potion_data: list) -> None:
-        # Initialise the Hash Table
-        # Time complexity should be O(len(potion_data)* insert) = O(C), where C is the length of potion_data
+        """
+        Initialises the Hash Table. Uses the hash_table ADT so that accessing potions can be done in constant time given that
+        you have the name of the potion. This also enables inserting and deleting potions to be in constant time.
+
+        Time complexity should be O(len(potion_data)* insert) = O(C), where C is the length of potion_data
+        O(insert) is assumed to be in constant time
+        :param potion_data: list containing values of [Name, Type, Buying Price]
+        :return: None
+        """
+
         self.potion_table = LinearProbePotionTable(len(potion_data))
         for potion in potion_data:
             # Add all the potions and hash the name of each potion
             self.potion_table[potion[1]] = Potion.create_empty(potion[0], potion[1], potion[2])
 
     def add_potions_to_inventory(self, potion_name_amount_pairs: list[tuple[str, float]]) -> None:
-        # Adds the potions that are being sold to AVL Tree
-        # Time Complexity should be O(len(potion_name_amount_pairs) * comp(insert))
-        # Time Complexity will be O(C * log(N)) since inserting into an AVL Tree will rebalance the tree when unbalanced
-        # , this guarantees the insertion to be log(N).
+        """
+        Adds the potion tuples that are being sold to AVL Tree. Uses the avl ADT ensures that the potions that are being
+        added will be sorted in a tree at logN complexity. Accessing the node and deleting the node will also be
+        performed in logN time.
+
+        Time Complexity should be O(len(potion_name_amount_pairs) * insert)
+        Time Complexity will be O(C * log(N)) since inserting into an AVL Tree will rebalance the tree when unbalanced
+        , this guarantees the insertion to be log(N).
+        O(insert) = log(N)
+        O(len(potion_name_amount_pairs) = C
+
+        :param potion_name_amount_pairs: List of elements containing a tuple of (Name, Amount of Potion in Litres)
+        :return: None
+        """
+
         for potion in potion_name_amount_pairs:
             potion_price = self.potion_table[potion[0]].buy_price
             self.potion_inventory[potion_price] = potion
 
     def choose_potions_for_vendors(self, num_vendors: int) -> list:
-        # Overall complexity of O(C*(log(N) + log(N) + append) = O(C*log(N))
-        # Initialise the potions that are being sold
+        """
+        Chooses the potions that the vendor will offer based on the random number generator. Uses the random_gen file
+        to generate random numbers.
+
+        Overall complexity of O(C*(kth_largest + delete + append)) = O(C*(log(N) + log(N) + append)) = O(C*log(N))
+        Initialise the potions that are being sold and returns a list to be sold.
+
+        :param num_vendors: Number of vendors
+        :return: list of selling potions
+        """
+
         potion_sell_list = []
         # For every vendor, pick a random kth-largest potion
         for i in range(num_vendors):
@@ -53,6 +90,13 @@ class Game:
         return potion_sell_list
 
     def solve_game(self, potion_valuations: list[tuple[str, float]], starting_money: list[float]) -> list[float]:
+        """
+        Method to try find the optimal profit for a given starting money value. TO ADD
+
+        :param potion_valuations: list of potion names and the buying price of adventurers
+        :param starting_money: list of starting money values
+        :return: list of optimal profit for each starting money value
+        """
         results = []
         profits_tree = AVLTree()
 
