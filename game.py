@@ -2,6 +2,7 @@ from __future__ import annotations
 # ^ In case you aren't on Python 3.10
 from avl import AVLTree
 from hash_table import LinearProbePotionTable
+from potion import Potion
 from random_gen import RandomGen
 
 class Game:
@@ -19,7 +20,7 @@ class Game:
         self.potion_table = LinearProbePotionTable(len(potion_data))
         for potion in potion_data:
             # Add all the potions and hash the name of each potion
-            self.potion_table[potion[0]] = potion
+            self.potion_table[potion[0]] = Potion.create_empty(potion[1], potion[0], potion[2])
 
     def add_potions_to_inventory(self, potion_name_amount_pairs: list[tuple[str, float]]) -> None:
         # Adds the potions that are being sold to AVL Tree
@@ -27,7 +28,7 @@ class Game:
         # Time Complexity will be O(C * log(N)) since inserting into an AVL Tree will rebalance the tree when unbalanced
         # , this guarantees the insertion to be log(N).
         for potion in potion_name_amount_pairs:
-            potion_price = self.potion_table[potion[0]][2]
+            potion_price = self.potion_table[potion[0]].buy_price
             self.potion_inventory[potion_price] = potion
 
     def choose_potions_for_vendors(self, num_vendors: int) -> list:
