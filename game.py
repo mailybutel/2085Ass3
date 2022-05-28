@@ -20,7 +20,7 @@ class Game:
         self.potion_table = LinearProbePotionTable(len(potion_data))
         for potion in potion_data:
             # Add all the potions and hash the name of each potion
-            self.potion_table[potion[0]] = Potion.create_empty(potion[1], potion[0], potion[2])
+            self.potion_table[potion[1]] = Potion.create_empty(potion[0], potion[1], potion[2])
 
     def add_potions_to_inventory(self, potion_name_amount_pairs: list[tuple[str, float]]) -> None:
         # Adds the potions that are being sold to AVL Tree
@@ -38,7 +38,7 @@ class Game:
         # For every vendor, pick a random kth-largest potion
         for i in range(num_vendors):
             # Choose a random number between 0 and C - i, where C is the number of potions and i is the ith vendor
-            number_to_choose = len(self.potion_inventory) - i
+            number_to_choose = len(self.potion_inventory)
             # Select a random number between 0 to C - i
             p = self.rand.randint(number_to_choose)
             # Get the potion: O(log(N))
@@ -47,6 +47,9 @@ class Game:
             potion_sell_list.append(potion.item)
             # Delete the potion: O(log(N))
             self.potion_inventory.__delitem__(potion.key)
+
+        self.add_potions_to_inventory(potion_sell_list)
+
         return potion_sell_list
 
     def solve_game(self, potion_valuations: list[tuple[str, float]], starting_money: list[int]) -> list[float]:
@@ -101,30 +104,30 @@ class Game:
 
 
 
-G = Game()
-# Setting the potions with the stats: Name, Category, Buying Price from Vendors ($/L)
-G.set_total_potion_data([
-["Potion of Health Regeneration", "Health", 20],
-["Potion of Extreme Speed", "Buff", 10],
-["Potion of Deadly Poison", "Damage", 45],
-["Potion of Instant Health", "Health", 5],
-["Potion of Increased Stamina", "Buff", 25],
-["Potion of Untenable Odour", "Damage", 1]
-])
-
-G.add_potions_to_inventory([
-    ("Potion of Health Regeneration", 4),
-    ("Potion of Extreme Speed", 5),
-    ("Potion of Instant Health", 3),
-    ("Potion of Increased Stamina", 10),
-    ("Potion of Untenable Odour", 5)
-])
-
-full_vendor_info = [
-            ("Potion of Health Regeneration", 30),
-            ("Potion of Extreme Speed", 15),
-            ("Potion of Instant Health", 15),
-            ("Potion of Increased Stamina", 20),
-        ]
-
-G.solve_game(full_vendor_info, [12.5, 45, 80])
+# G = Game()
+# # Setting the potions with the stats: Name, Category, Buying Price from Vendors ($/L)
+# G.set_total_potion_data([
+# ["Potion of Health Regeneration", "Health", 20],
+# ["Potion of Extreme Speed", "Buff", 10],
+# ["Potion of Deadly Poison", "Damage", 45],
+# ["Potion of Instant Health", "Health", 5],
+# ["Potion of Increased Stamina", "Buff", 25],
+# ["Potion of Untenable Odour", "Damage", 1]
+# ])
+#
+# G.add_potions_to_inventory([
+#     ("Potion of Health Regeneration", 4),
+#     ("Potion of Extreme Speed", 5),
+#     ("Potion of Instant Health", 3),
+#     ("Potion of Increased Stamina", 10),
+#     ("Potion of Untenable Odour", 5)
+# ])
+#
+# full_vendor_info = [
+#             ("Potion of Health Regeneration", 30),
+#             ("Potion of Extreme Speed", 15),
+#             ("Potion of Instant Health", 15),
+#             ("Potion of Increased Stamina", 20),
+#         ]
+#
+# G.solve_game(full_vendor_info, [12.5, 45, 80])

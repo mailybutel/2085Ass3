@@ -9,20 +9,20 @@ class TestGame(unittest.TestCase):
         g = Game()
         g.set_total_potion_data([
             (str(x), str(x), x)
-            for x in range(1, 101)
+            for x in range(1, 10)
         ])
         g.add_potions_to_inventory([
             (str(x), x)
-            for x in range(2, 101)
+            for x in range(2, 10)
         ])
         # Vendor Selection never selects empty potions
-        res = g.choose_potions_for_vendors(99)
+        res = g.choose_potions_for_vendors(8)
         self.assertFalse("1" in res)
         # Vendor Selection can be redone - inventory is not changed
-        res2 = g.choose_potions_for_vendors(99)
-        self.assertTrue(len(res2) == 99)
+        res2 = g.choose_potions_for_vendors(8)
+        self.assertTrue(len(res2) == 8)
         # Vendor Selection gives unique results
-        self.assertTrue(len(set(res)) == len(set(res2)) == 99)
+        self.assertTrue(len(set(res)) == len(set(res2)) == 8)
 
     def test_example(self):
         G = Game()
