@@ -10,7 +10,7 @@ class Game:
     def __init__(self, seed=0) -> None:
         self.rand = RandomGen(seed=seed)
         # Potion Hash Table (Contains all possible potions)
-        self.potion_table = LinearProbePotionTable(3)
+        self.potion_table = LinearProbePotionTable(100)
         # Potion Binary Search Tree (Contains potions that are purchasable)
         self.potion_inventory = AVLTree()
 
@@ -145,6 +145,54 @@ class Game:
         #             earnings += quantity * potion[3]
         #             results.append(earnings)
         #             break
+
+
+
+
+        #DANIEL
+        # profit_sorted = ArraySortedList(len(potion_valuations))
+        #
+        # # iterate through each item in potion_valuations:
+        # for potion in potion_valuations:
+        #     # Price adventurers are willing to pay ($/L)
+        #     potion_sell_price = potion[1]
+        #
+        #     # Price to buy from vendors ($/L)
+        #     potion_buy_price = self.potion_table[potion[0]].buy_price
+        #
+        #     # Profit per litre ($/L)
+        #     potion_profit = potion_sell_price - potion_buy_price
+        #
+        #     profit_sorted.add((potion_profit, potion[0], potion_sell_price))
+        #
+        # profits = []
+        # for i in range(len(starting_money)):
+        #     money = starting_money[i]
+        #     profits.append(0)
+        #     for j in range(len(profit_sorted) - 1, -1, -1):
+        #         # Potion currently purchasing
+        #         potion_purchasing = self.potion_table[profit_sorted[j][1]]
+        #         # Price of current potion
+        #         purchase_price = potion_purchasing.buy_price
+        #
+        #         # Check if enough money to buy out entire stock
+        #         purchasable_litres = money / purchase_price
+        #
+        #         # Purchasable quantity
+        #         purchasable_quantity = self.potion_inventory[purchase_price][1]
+        #
+        #         # if enough money then profit off all of this potion, then go to next
+        #         if purchasable_litres >= purchasable_quantity:
+        #             profits[i] += purchasable_quantity * profit_sorted[j][2]
+        #             money -= purchase_price * purchasable_quantity
+        #             print(purchasable_quantity * profit_sorted[j][2])
+        #         else:
+        #             profits[i] += purchasable_litres * profit_sorted[j][2]
+        #             money -= purchase_price * purchasable_litres
+        #             print(purchasable_litres * profit_sorted[j][2])
+        #             break
+        # return profits
+
         return results
             
             
