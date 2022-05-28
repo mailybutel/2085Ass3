@@ -52,44 +52,100 @@ class Game:
 
         return potion_sell_list
 
-    def solve_game(self, potion_valuations: list[tuple[str, float]], starting_money: list[int]) -> list[float]:
-        profits = []
+    def solve_game(self, potion_valuations: list[tuple[str, float]], starting_money: list[float]) -> list[float]:
         results = []
-        vendor_available = self.choose_potions_for_vendors(4)
+        profits_tree = AVLTree()
 
+        # iterate through each potion
         for potion in potion_valuations:
-            #appends into profits where each element is [net profit,litres available,buy price,resell price]
-            counter = 0
+            # get the potion data from potion data hash table
+            potion_vendor_price = self.potion_table[potion[0]].buy_price
+            # To get optimal trades, base them on how much you can earn per dollar spent
+            # So, possible trades will be stored in AVLTree based on profit_per_dollar
+            # This is done by ($(sell)/L - $(spend)/L) / $(spend)/L
+            #                = ∂$/L / $(spend)/L    => or ∂$/L * L/$(spend)
+            #                = ∂$/$(spend)     "the money earned per dollar spent"
+            litres_available = self.potion_inventory[potion_vendor_price][1]
+            profit_per_litre = potion[1] - potion_vendor_price
+            profit_per_dollar = profit_per_litre/potion_vendor_price
+            # Must have a limit to each trade. Instead of basing it on Litres, convert
+            # this to maximum money spent per trade
+            max_money_spend = litres_available * potion_vendor_price
 
-            
-            while vendor_available[counter][0] != potion[0]:
-                if counter > len(potion_valuations): #Vendors not selling potion wanted by adventurers
+            # BST can only have unique nodes. So, if two potions have the same profit per dollar, sum them
+            # This can be done since they are now essentially the same item
+            if profits_tree.__contains__(profit_per_dollar):
+                previous_max_money_spend = profits_tree[profit_per_dollar][1]
+                profits_tree.__delitem__(profit_per_dollar)
+                profits_tree[profit_per_dollar] = [profit_per_dollar, max_money_spend + previous_max_money_spend]
+            else:
+                profits_tree[profit_per_dollar] = [profit_per_dollar, max_money_spend]
+
+        # Play each day
+        for i in range(len(starting_money)):
+            player_money = starting_money[i]
+            # earnings always starts with the money we start with
+            earnings = player_money
+            # start from the largest profit trade in the tree, going down
+            for k in range(1, len(profits_tree) + 1):
+                kth_best_transaction = profits_tree.kth_largest(k).item
+
+                # if the player doesn't have enough for the whole trade,
+                # do their maximum and finish the day
+                if player_money <= kth_best_transaction[1]:
+                    earnings += player_money * kth_best_transaction[0]
                     break
-                else:
-                    counter += 1
 
-            profits.append([potion[1]-self.potion_table[potion[0]].buy_price, vendor_available[counter][1], self.potion_table[potion[0]].buy_price, potion[1]])
-        #profits.sort(reverse=True)
-        #sorts with respect to the 1st element first and then the 3rd element
-        profits.sort(key=lambda a: (a[1],a[3]))
-        #print(profits)
-
-        for money in starting_money:
-            earnings = 0
-            print("Money " + str(money))
-            for potion in profits:
-                #Buy price * quantity - available money
-                if (money - potion[2]*potion[1]) > 0:
-                    earnings += potion[3]*potion[1]
-                    money = money - potion[2]*potion[1]    
-                    
-                #Cannot buy all stock of most profitable, buys highest possible share of stock
+                # They can do the whole trade. Then move on to the next best one
                 else:
-                    quantity = money/potion[2]
-                    earnings += quantity * potion[3]
-                    results.append(earnings)
-                    break
-        print(results)
+                    earnings += kth_best_transaction[0]*kth_best_transaction[1]
+                    player_money = player_money - kth_best_transaction[1]
+            results.append(earnings)
+
+                # if(player_money - profit_list[2]*profit_list[1]) > 0:
+                #     earnings += profit_list[3]*profit_list[1]
+                #     player_money = player_money - profit_list[2]*profit_list[1]
+                #
+                # # Cannot buy all stock of most profitable, buys highest possible share of stock
+                # else:
+                #     quanity = player_money/profit_list[2]
+                #     earnings += quanity * profit_list[3]
+                #     results.append(earnings)
+                #     break
+
+        # for potion in potion_valuations:
+        #     #appends into profits where each element is [net profit,litres available,buy price,resell price]
+        #     counter = 0
+        #
+        #
+        #     while vendor_available[counter][0] != potion[0]:
+        #         if counter > len(potion_valuations): #Vendors not selling potion wanted by adventurers
+        #             break
+        #         else:
+        #             counter += 1
+        #
+        #     profits.append([potion[1]-self.potion_table[potion[0]].buy_price, vendor_available[counter][1], self.potion_table[potion[0]].buy_price, potion[1]])
+        # #profits.sort(reverse=True)
+        # #sorts with respect to the 1st element first and then the 3rd element
+        # profits.sort(key=lambda a: (a[1],a[3]))
+        # #print(profits)
+
+        # for money in starting_money:
+        #     earnings = 0
+        #     print("Money " + str(money))
+        #     for potion in profits:
+        #         #Buy price * quantity - available money
+        #         if (money - potion[2]*potion[1]) > 0:
+        #             earnings += potion[3]*potion[1]
+        #             money = money - potion[2]*potion[1]
+        #
+        #         #Cannot buy all stock of most profitable, buys highest possible share of stock
+        #         else:
+        #             quantity = money/potion[2]
+        #             earnings += quantity * potion[3]
+        #             results.append(earnings)
+        #             break
+        return results
             
             
                 
