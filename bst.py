@@ -51,7 +51,7 @@ class BSTInOrderIterator:
         result = self.stack.pop()
         self.current = result.right
 
-        return result.key
+        return result.item
 
 
 class BinarySearchTree(Generic[K, I]):

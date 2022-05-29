@@ -3,14 +3,18 @@
 Runs the game, which handles potion inventory of PotionCorp and vendors. Finds the optimum profit for a given starting
 money value
 """
+from __future__ import annotations
+
 __author__ = 'Brendon Taylor, modified by Jackson Goerner, Ze Chong, Daniel Ding and Maily Butel'
 __docformat__ = 'reStructuredText'
 __modified__ = '21/05/2020'
 __since__ = '14/05/2020'
-from __future__ import annotations
+
 # ^ In case you aren't on Python 3.10
+from array_sorted_list import ArraySortedList
 from avl import AVLTree
 from hash_table import LinearProbePotionTable
+from linked_stack import LinkedStack
 from potion import Potion
 from random_gen import RandomGen
 
@@ -116,35 +120,43 @@ class Game:
             # this to maximum money spent per trade
             max_money_spend = litres_available * potion_vendor_price
 
-            # BST can only have unique nodes. So, if two potions have the same profit per dollar, sum them
-            # This can be done since they are now essentially the same item
-            if profits_tree.__contains__(profit_per_dollar):
-                previous_max_money_spend = profits_tree[profit_per_dollar][1]
-                profits_tree.__delitem__(profit_per_dollar)
-                profits_tree[profit_per_dollar] = [profit_per_dollar, max_money_spend + previous_max_money_spend]
-            else:
-                profits_tree[profit_per_dollar] = [profit_per_dollar, max_money_spend]
+            # Only add in positive profits
+            if profit_per_dollar > 0:
+                # BST can only have unique nodes. So, if two potions have the same profit per dollar, sum them
+                # This can be done since they are now essentially the same item
+                if profit_per_dollar in profits_tree:
+                    previous_max_money_spend = profits_tree[profit_per_dollar][1]
+                    del profits_tree[profit_per_dollar]
+                    profits_tree[profit_per_dollar] = [profit_per_dollar, max_money_spend + previous_max_money_spend]
+                else:
+                    profits_tree[profit_per_dollar] = [profit_per_dollar, max_money_spend]
 
-        # Play each day
-        for i in range(len(starting_money)):
+        # Play each day                         # O(M * (N + N)) = O(M * N)
+        for i in range(len(starting_money)):    # O(M)
+            profits_stack = LinkedStack()
+            iterable = iter(profits_tree)
+            for j in range(len(profits_tree)):      # O(N) since each link is passed twice
+                profits_stack.push(next(iterable))
+
             player_money = starting_money[i]
             # earnings always starts with the money we start with
             earnings = player_money
             # start from the largest profit trade in the tree, going down
-            for k in range(1, len(profits_tree) + 1):
-                kth_best_transaction = profits_tree.kth_largest(k).item
+            for k in range(len(profits_stack)):     # O(N)
+                trade = profits_stack.pop()         # O(1)
 
                 # if the player doesn't have enough for the whole trade,
                 # do their maximum and finish the day
-                if player_money <= kth_best_transaction[1]:
-                    earnings += player_money * kth_best_transaction[0]
+                if player_money <= trade[1]:
+                    earnings += player_money * trade[0]
                     break
 
                 # They can do the whole trade. Then move on to the next best one
                 else:
-                    earnings += kth_best_transaction[0]*kth_best_transaction[1]
-                    player_money = player_money - kth_best_transaction[1]
+                    earnings += trade[0]*trade[1]
+                    player_money = player_money - trade[1]
             results.append(earnings)
+        return results
 
                 # if(player_money - profit_list[2]*profit_list[1]) > 0:
                 #     earnings += profit_list[3]*profit_list[1]
@@ -236,8 +248,6 @@ class Game:
         #             print(purchasable_litres * profit_sorted[j][2])
         #             break
         # return profits
-
-        return results
             
             
                 
