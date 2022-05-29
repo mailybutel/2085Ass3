@@ -54,8 +54,31 @@ class LinearProbePotionTable(Generic[T]):
 
     def statistics(self) -> tuple:
         """
-        Write a paragraph of what the output should be
-        :return:
+        Good Hash Function:
+        Good hash function takes the ASCII value of each character in the string and uses noise values to create a
+        pseudo random value. Since the hash table always has double the space of the inputs, there is a random and
+        low chance of conflicts. Therefore, conflict count does not increase as table size increases.
+
+        The longest probe length will also be random since the input string will hash a random value, probe chains
+        are expected to be less than the bad hash function and will not increase as the table size increases.
+
+        The total probe distance depends on the number of conflicts and the longest probe chain, however since neither
+        of those are dependent on the table size, the total distance probed will also not depend on the table size.
+
+
+        Bad Hash Function:
+        Bad hash function takes the ascii value of the first character in the string and finds the modulo of that with
+        the table size. Therefore, once all the ascii values have been taken, there will be a linear increase in amount
+        of conflicts as the table size increases.
+
+        The longest probe length will also increase linearly after a certain table size. Once all the ASCII values are
+        taken, conflicts will start to appear and the longest probe length will be the number of ASCII values taken
+        plus the number of conflicts.
+
+        The total distance probed will increase exponentially however since every time a conflict is added, the probe
+        length of the chain will increase to chain length + 1 and will run through that every conflict.
+
+        :return: a tuple of (number of conflicts, total distance probed, length of longest probe chain)
         """
         return (self.conflict_count, self.probe_total, self.probe_max)
          
