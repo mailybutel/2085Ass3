@@ -233,6 +233,8 @@ class AVLTree(BinarySearchTree, Generic[K, I]):
         :complexity best: O(1) the kth largest value is the root node
         :complexity worst: O(log(N)) the kth largest value is at the bottom of the tree
         where N is the total number of nodes in the tree
+
+        see kth_largest_aux(self, k: int, current: AVLTreeNode) -> AVLTreeNode
         """
         # precondition: 1 < k <= the number of nodes in the tree
         if k > self.get_num_nodes_subtree(self.root) or k < 1:  # key not found

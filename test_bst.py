@@ -34,6 +34,7 @@ class TestBST(unittest.TestCase):
     def test_minimal(self):
         self.assertEqual(self.b.get_minimal(self.b.get_tree_node_by_key(15)).item, "F")
         self.assertEqual(self.b.get_minimal(self.b.get_tree_node_by_key(20)).item, "D")
+        self.assertEqual(self.b.get_minimal(self.b.get_tree_node_by_key(17)).item, "D")
     
     def test_successor(self):
         self.assertEqual(self.b.get_successor(self.b.get_tree_node_by_key(15)).item, "D")
